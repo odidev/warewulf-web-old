@@ -89,6 +89,39 @@ kernel from the controller node and set both in the "default" node profile.
 ```bash
 sudo wwctl container import docker://warewulf/rocky:8 rocky-8
 ```
+## Creating Containers From Scratch
+
+You can also create containers from scratch and import those containers into Warewulf as previous versions of Warewulf did. This is a recommended way if you can not find the docker image for your host architecture/platform.
+
+### Building A Container From Your Host
+
+RPM based distributions, as well as Debian variants can all bootstrap mini `chroot()` directories which can then be used to bootstrap your node's container.
+
+For example, on an RPM based Linux distribution with YUM or DNF, you can do something like the following:
+
+```bash
+$ sudo yum install --releasever=/ --installroot /tmp/newroot basesystem bash \
+    chkconfig coreutils e2fsprogs ethtool filesystem findutils \
+    gawk grep initscripts iproute iputils net-tools nfs-utils pam \
+    psmisc rsync sed setup shadow-utils rsyslog tzdata util-linux \
+    words zlib tar less gzip which util-linux openssh-clients \
+    openssh-server dhclient pciutils vim-minimal shadow-utils \
+    strace cronie crontabs cpio wget rocky-release ipmitool yum \
+    NetworkManager
+```
+
+You can do something similar with Debian-based distributions:
+
+```bash
+sudo apt-get install debootstrap
+sudo debootstrap stable /tmp/newroot http://ftp.us.debian.org/debian
+```
+
+Once you have created and modified your new `chroot()`, you can import it into Warewulf with the following command:
+
+```bash
+sudo wwctl container import /tmp/newroot containername
+```
 
 ## Set up the default node profile
 
